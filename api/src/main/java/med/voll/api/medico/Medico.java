@@ -1,15 +1,13 @@
 package med.voll.api.medico;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import med.voll.api.endereco.Endereco;
 
 @Table(name = "medicos")
 @Entity(name = "Medico")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -29,7 +27,7 @@ public class Medico {
     @Embedded
     private Endereco endereco;
 
-    public Medico(DadosCadastradosMedico dados) {
+    public Medico(DadosCadastroMedico dados) {
         this.nome = dados.nome();
         this.email = dados.email();
         this.crm = dados.crm();
