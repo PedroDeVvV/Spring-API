@@ -6,6 +6,7 @@ import med.voll.api.domain.paciente.*;
 import med.voll.api.domain.paciente.dto.DadosAtualizacaoPaciente;
 import med.voll.api.domain.paciente.dto.DadosCadastroPaciente;
 import med.voll.api.domain.paciente.dto.DadosDetalhamentoPaciente;
+import med.voll.api.domain.paciente.dto.DadosListagemPaciente;
 import med.voll.api.domain.paciente.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,7 @@ public class PacienteController {
 
     @GetMapping
     public ResponseEntity<Page<Paciente>> listar(@PageableDefault(size = 10, sort = {"nome"})Pageable paginacao) {
-        var page = repository.findAll(paginacao);
+        var page = repository.findAllByAtivoTrue(paginacao); //.map(DadosListagemPaciente::new);
         return ResponseEntity.ok(page);
     }
 

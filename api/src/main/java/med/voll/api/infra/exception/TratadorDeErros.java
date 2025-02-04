@@ -25,6 +25,18 @@ public class TratadorDeErros {
 //        return ResponseEntity.status(400).body("Os paramêtros não correspondem ao solicitado.");
     }
 
+    //faz com que as exceções lançadas sejam devolvidas para o body da requisição
+    @ExceptionHandler(ValidacaoException.class)
+    public ResponseEntity tratarErroRegraDeNegocio(ValidacaoException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    private record DadosErroValidacao(String campo, String mensagem) {
+        public DadosErroValidacao(FieldError erro) {
+            this(erro.getField(), erro.getDefaultMessage());
+        }
+    }
+
     private record DadosErrosValidacao(String campo, String mensagem) {
         public DadosErrosValidacao(FieldError erro) {
             this(erro.getField(), erro.getDefaultMessage());

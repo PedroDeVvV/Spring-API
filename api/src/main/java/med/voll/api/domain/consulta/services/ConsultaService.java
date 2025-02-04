@@ -1,9 +1,11 @@
 package med.voll.api.domain.consulta.services;
 
 import med.voll.api.domain.consulta.Consulta;
+import med.voll.api.domain.consulta.dtos.DadosDetalhamentoConsulta;
 import med.voll.api.domain.consulta.repository.ConsultaRepository;
 import med.voll.api.domain.consulta.dtos.DadosAgendamentoConsulta;
 import med.voll.api.domain.consulta.dtos.DadosCancelamentoConsulta;
+import med.voll.api.domain.consulta.validation.ValidadorAgendamentoDeConsultas;
 import med.voll.api.domain.medico.Medico;
 import med.voll.api.domain.medico.repository.MedicoRepository;
 import med.voll.api.domain.paciente.Paciente;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 //Agenda de consultas
 @Service
@@ -28,7 +31,10 @@ public class ConsultaService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
-    public void agendar(DadosAgendamentoConsulta dados) {
+    @Autowired
+    private List<ValidadorAgendamentoDeConsultas> validadores;
+
+    public DadosDetalhamentoConsulta agendar(DadosAgendamentoConsulta dados) {
 
         if (!pacienteRepository.existsById(dados.idPaciente())) {
             throw new ValidacaoException("Id do paciente informado não existe");
@@ -38,11 +44,19 @@ public class ConsultaService {
             throw new ValidacaoException("Id do médico informado não existe");
         }
 
+        validadores.forEach(v -> v.validar(dados));
+
         Paciente paciente = pacienteRepository.getReferenceById(dados.idPaciente()); //.get(); //sem o get, ele retorna um optional
-        Medico medico = escolherMedico(dados);
+        var medico = escolherMedico(dados);
+
+        if (medico == null) {
+            throw new ValidacaoException("Não existe médico disponível nessa data");
+        }
 
         var consulta = new Consulta(null, medico, paciente, dados.data(), null);
         consultaRepository.save(consulta);
+
+        return new DadosDetalhamentoConsulta(consulta);
     }
 
     private Medico escolherMedico(DadosAgendamentoConsulta dados) {
