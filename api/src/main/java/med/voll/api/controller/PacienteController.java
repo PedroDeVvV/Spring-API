@@ -6,6 +6,7 @@ import med.voll.api.domain.paciente.*;
 import med.voll.api.domain.paciente.dto.DadosAtualizacaoPaciente;
 import med.voll.api.domain.paciente.dto.DadosCadastroPaciente;
 import med.voll.api.domain.paciente.dto.DadosDetalhamentoPaciente;
+import med.voll.api.domain.paciente.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
